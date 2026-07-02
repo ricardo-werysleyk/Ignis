@@ -10,7 +10,7 @@ class LoadCell():
     def current_mass_calc(self, t, t_ingnition, t_duration):
         if t < t_ingnition:
             return self.initial_mass
-        elif t > t_duration:
+        elif t > (t_ingnition + t_duration):
             return 0.0
         else:
             normalized_time = (t - t_ingnition)/t_duration #varia de 0 a 1
@@ -23,7 +23,7 @@ class LoadCell():
     # causado pelo retorno da célula de carga para posição original
     def spring_effect_calc(self, t, t_end):
         if t >= t_end:
-            t_elapsed = t_end - t
+            t_elapsed = t - t_end            
             # o efeito mola terá um "coice" iniciar configuravel, nesse caso de 5%
             # efeito sub amortecido - e**gamma*t faz a função decair para zero
             # o gráfico de amortecimento e efeito mola seguirá a função seno de 2pi de acordo com a frequencia e tempo passado

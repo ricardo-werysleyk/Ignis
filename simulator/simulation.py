@@ -13,7 +13,6 @@ burn_duration = 13.5
 time_vector = np.arange(0, total_time, 1.0/FREQUENCY_HZ)
 
 balance = LoadCell(initial_mass = 70.0)
-
 test_data = list()
 
 for t in time_vector:
@@ -26,8 +25,10 @@ for t in time_vector:
     
     test_data.append(linha)
 
-print(test_data)
-
 estructured_data = pd.DataFrame(test_data)
 
-print(estructured_data)
+try: 
+    estructured_data.to_csv('dados_simulados.csv', index=False)
+    print("Arquivo csv gerado")
+except Exception as e:
+    print(e)
