@@ -4,9 +4,17 @@ import os
 import pandas as pd
 
 import core.filters as filter
+from simulator.simulation import Simulation
 
 DATA_ARQUIVE_PATH = 'dados_simulados.csv'
-FREQUENCY_HZ = 860.0
+# Configuração Firebox
+FREQUENCY_HZ = 860.0 # frequência do ads1115
+TOTAL_TIME = 16.0
+T_IGNITION = 0.5
+BURN_DURATION = 13.5
+INITIAL_MASS = 70.0
+
+# Frequencia de corte e constante para filtro
 FC = 1.0  
 NYQUIST = FREQUENCY_HZ / 2.0
 
@@ -52,11 +60,16 @@ def graffic_plot(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filte
     plt.show()
     
 def main():
-    time, mass = data_arquive_load(DATA_ARQUIVE_PATH)
-    filtered_mass = filter.butterworth_filter(FC, NYQUIST, mass)
-    delta_mass_raw = mass_derivate(mass, FREQUENCY_HZ)
-    delta_mass_filtered = mass_derivate(filtered_mass, FREQUENCY_HZ)
+    simulation = Simulation(FREQUENCY_HZ, TOTAL_TIME, T_IGNITION, BURN_DURATION, INITIAL_MASS)
     
-    graffic_plot(time, mass, filtered_mass, delta_mass_raw, delta_mass_filtered)
+    if simulation.simulate_data():    
+        time, mass = data_arquive_load(DATA_ARQUIVE_PATH)
+        filtered_mass = filter.butterworth_filter(FC, NYQUIST, mass)
+        delta_mass_raw = mass_derivate(mass, FREQUENCY_HZ)
+        delta_mass_filtered = mass_derivate(filtered_mass, FREQUENCY_HZ)
+        
+        graffic_plot(time, mass, filtered_mass, delta_mass_raw, delta_mass_filtered)
+    else:
+        print("Erro na simulação")
 
 main()
