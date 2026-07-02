@@ -23,7 +23,9 @@ def data_arquive_load(data_path):
         df = pd.read_csv(data_path)
         time = df["time"].values
         mass = df["mass"].values
-        return time, mass
+        t1 = df["termopar1"].values
+        t2 = df["termopar2"].values
+        return time, mass, t1, t2
     else:
         raise FileNotFoundError(f"Erro Crítico: O arquivo {data_path} não foi localizado na pasta.")
 
@@ -32,9 +34,9 @@ def mass_derivate(mass, fs):
     delta_mass = -np.gradient(mass, dt)
     return np.clip(delta_mass, 0, None)
 
-def graffic_plot(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filtered):
+def graffic_plot(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filtered, termopar1, termopar2):
     # Gráfico 1: Comparativo de Massa (Bruta vs Filtrada)
-    plt.subplot(2, 1, 1)
+    plt.subplot(3, 1, 1)
     plt.plot(time, mass_raw, color='gray', alpha=0.5, label='Massa Bruta (Com Ruído)')
     plt.plot(time, mass_filtered, color='blue', linewidth=2, label='Massa Filtrada (Butterworth)')
     plt.ylabel('Massa do Propelente (g)')
@@ -43,7 +45,7 @@ def graffic_plot(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filte
     plt.grid(True, linestyle='--')
 
     # Gráfico 2: Comparativo de Taxa Balística (Bruta vs Filtrada)
-    plt.subplot(2, 1, 2)
+    plt.subplot(3, 1, 2)
     plt.plot(time, delta_mass_raw, color='salmon', alpha=0.4, label='Taxa Bruta (Inviável)')
     plt.plot(time, delta_mass_filtered, color='darkred', linewidth=2, label='Taxa de Queima Tratada (g/s)')
     plt.xlabel('Tempo (s)')
@@ -51,6 +53,13 @@ def graffic_plot(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filte
     
     pico_taxa_real = np.max(delta_mass_filtered)
     plt.ylim(-0.5, pico_taxa_real * 1.4)
+    
+    # Gráfico 3: Comparativo da temperatura dos termopares
+    plt.subplot(3, 1, 3)
+    plt.plot(time, termopar1, color='red', alpha=0.4, label='Termopar base')
+    plt.plot(time, termopar2, color='darkred', linewidth=2, label='Termopar meio')
+    plt.xlabel('Tempo (s)')
+    plt.ylabel('Temperatura (°C)')
     
     plt.legend(loc='upper right')
     plt.grid(True, linestyle='--')
@@ -63,12 +72,12 @@ def main():
     simulation = Simulation(FREQUENCY_HZ, TOTAL_TIME, T_IGNITION, BURN_DURATION, INITIAL_MASS)
     
     if simulation.simulate_data():    
-        time, mass = data_arquive_load(DATA_ARQUIVE_PATH)
+        time, mass, t1, t2 = data_arquive_load(DATA_ARQUIVE_PATH)
         filtered_mass = filter.butterworth_filter(FC, NYQUIST, mass)
         delta_mass_raw = mass_derivate(mass, FREQUENCY_HZ)
         delta_mass_filtered = mass_derivate(filtered_mass, FREQUENCY_HZ)
         
-        graffic_plot(time, mass, filtered_mass, delta_mass_raw, delta_mass_filtered)
+        graffic_plot(time, mass, filtered_mass, delta_mass_raw, delta_mass_filtered, t1, t2)
     else:
         print("Erro na simulação")
 
