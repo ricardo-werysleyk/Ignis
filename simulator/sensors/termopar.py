@@ -6,16 +6,17 @@ class Termopar:
         self.heating_hate = heating_hate
         self.temp_max = temp_max
         self.temp_environment = 25.0
+        self.upswing_window = 0.5
         
         # tempo da frente de chama atingir termopar
-        self.t_starter_jump = self.t_peak - 0.3
+        self.t_starter_jump = self.t_peak - self.upswing_window
     
     def signal_read(self, t):
         noise = np.random.normal(0, 1.0)
         if t < self.t_starter_jump:
             return self.temp_environment + (t * self.heating_hate) + noise
         elif self.t_starter_jump <= t <= self.t_peak:
-            proportion = (t - self.t_starter_jump) / 0.1
+            proportion = (t - self.t_starter_jump) / self.upswing_window
             return self.temp_environment + (self.temp_max - self.temp_environment) * proportion + noise
         else:
             return (self.temp_max * np.exp(-0.2 * (t - self.t_peak))) + noise 
