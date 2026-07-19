@@ -5,14 +5,14 @@ class Termopar:
         self.t_peak = peak_time
         self.heating_hate = heating_hate
         self.temp_max = temp_max
-        self.temp_environment = 25.0
+        self.temp_environment = 24.5
         self.upswing_window = 0.5
         
-        # tempo da frente de chama atingir termopar
+        # tempo da frente de chama para cruzar a ponta metálica do termopar
         self.t_starter_jump = self.t_peak - self.upswing_window
     
     def signal_read(self, t):
-        noise = np.random.normal(0, 1.0)
+        noise = np.random.normal(0, 1.0) # Ruído térmico do amplificador MAX31855
         if t < self.t_starter_jump:
             return self.temp_environment + (t * self.heating_hate) + noise
         elif self.t_starter_jump <= t <= self.t_peak:

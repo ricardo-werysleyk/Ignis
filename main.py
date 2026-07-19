@@ -8,7 +8,7 @@ from simulator.simulation import Simulation
 
 DATA_ARQUIVE_PATH = 'data/dados_simulados.csv'
 # Configuração Firebox
-FREQUENCY_HZ = 860.0 # frequência do ads1115
+FREQUENCY_HZ = 3440.0 # frequência do ads1115 * 4
 TOTAL_TIME = 16.0
 T_IGNITION = 0.5
 BURN_DURATION = 13.5
@@ -23,8 +23,8 @@ def data_arquive_load(data_path):
         df = pd.read_csv(data_path)
         time = df["time"].values.astype(float)
         mass = df["mass"].values.astype(float)
-        t1 = df["termopar1"].values.astype(float)
-        t2 = df["termopar2"].values.astype(float)
+        t1 = df["termopar_start"].values.astype(float)
+        t2 = df["termopar_mid"].values.astype(float)
         pyro = df["infrared"].values.astype(float)
         return time, mass, t1, t2, pyro
     else:
@@ -35,36 +35,39 @@ def mass_derivate(mass, fs):
     delta_mass = -np.gradient(mass, dt)
     return np.clip(delta_mass, 0, None)
 
-def graffic_assembly(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filtered, termopar1, termopar2, pyro):
+def graffic_assembly(time, mass_raw, mass_filtered, delta_mass_raw, delta_mass_filtered, termopar_start, termopar_mid, pyro):
     plt.close('all')
     plt.figure(figsize=(10,8))
+    plt.title('Ignis - Análise de dados: Queima KNSU')        
     
-    # Gráfico 1: Comparativo de Massa (Bruta vs Filtrada)
+    # Massa bruta e filtrada
     plt.subplot(3, 1, 1)
-    plt.plot(time, mass_raw, color='gray', alpha=0.5, label='Massa Bruta (Com Ruído)')
+    plt.plot(time, mass_raw, color='gray', alpha=0.4, label='Massa Bruta (Com Ruído)')
     plt.plot(time, mass_filtered, color='blue', linewidth=2, label='Massa Filtrada (Butterworth)')
-    plt.ylabel('Massa do Propelente (g)')
-    plt.title('Análise de Sinais da Queima KNSU - Ignis')
     plt.legend(loc='upper right')
     plt.grid(True, linestyle='--')
+    plt.ylabel('Massa do Propelente (g)')
+    plt.xlabel('Tempo (s)')
 
-    # Gráfico 2: Comparativo de Taxa Balística (Bruta vs Filtrada)
+    # Variação mássica
     plt.subplot(3, 1, 2)
     plt.plot(time, delta_mass_raw, color='salmon', alpha=0.4, label='Taxa Bruta (Inviável)')
     plt.plot(time, delta_mass_filtered, color='darkred', linewidth=2, label='Taxa de Queima Tratada (g/s)')
     plt.xlabel('Tempo (s)')
     plt.ylabel('Variação mássica (g/s)')
     
-    pico_taxa_real = np.max(delta_mass_filtered)
-    plt.ylim(-0.5, pico_taxa_real * 1.4)
+    max_real_rate = np.max(delta_mass_filtered)
+    plt.ylim(-0.5, max_real_rate * 1.4)
     plt.legend(loc='upper right')
     plt.grid(True, linestyle='--')
     
-    # Gráfico 3: Comparativo da temperatura dos termopares e sensor infravermelho
+    # temperatura dos termopares e sensor infravermelho
     plt.subplot(3, 1, 3)
-    plt.plot(time, termopar1, color='red', alpha=0.4, label='Termopar base')
-    plt.plot(time, termopar2, color='darkred', linewidth=2, label='Termopar meio')
+    plt.plot(time, termopar_start, color='red', alpha=0.4, label='Termopar início')
+    plt.plot(time, termopar_mid, color='darkred', linewidth=2, label='Termopar meio')
     plt.plot(time, pyro, color='darkblue', linewidth=2, label='Pirometro')
+    plt.legend(loc='upper right')
+    plt.grid(True, linestyle='--')
     plt.xlabel('Tempo (s)')
     plt.ylabel('Temperatura (°C)')
 
