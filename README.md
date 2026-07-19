@@ -18,6 +18,8 @@ Grid de exibição na interface:
 
 Ignis conta com botões de controle, play/pause e reset, slider de linha de tempo que permite visualizar qualquer instante do ensaio e botão para abrir o explorador de arquivos e selecionar o arquivo .csv para análise.
 
+![Imagem referente ao app desktop](./assets/print_interface_ignis.PNG)
+
 # Como executar
 
 1. Instale o Python 3.11.9
