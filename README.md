@@ -30,6 +30,7 @@ Se não possuir a parte eletrônica Firebox ou um arquivo .csv no formato (time,
 5. Execute o arquivo python main.py  
 
 Se já pussuir o arquivo .csv  
+
 6. Execute o arquivo python ignis_desktop.py  
 
 # Tecnologia utilizadas
