@@ -20,17 +20,17 @@ Ignis conta com botões de controle, play/pause e reset, slider de linha de temp
 
 # Como executar
 
-1- Instale o Python 3.11.9
-2- Crie um ambiente de desenvolvimento virtual executando esse comando na pasta do projeto: ```pithon -m venv .venv```
-3- Ative o venv com o comando: ```./.venv/Scripts/activate```
-4- Execute o comando para instalar as dependências: ```pip install -r requirements.txt```
+1. Instale o Python 3.11.9
+2. Crie um ambiente de desenvolvimento virtual executando esse comando na pasta do projeto: ```pithon -m venv .venv```
+3. Ative o venv com o comando: ```./.venv/Scripts/activate```
+4. Execute o comando para instalar as dependências: ```pip install -r requirements.txt```
 
 Se não possuir a parte eletrônica Firebox ou um arquivo .csv no formato (time,mass,termopar_start,termopar_mid,infrared) para analisar, utilize o gêmeo digital desse projeto para gerar dados simulados próximos a realidade executando o passo 5, se já possui dados pule para o passo 6.
 
-5- Execute o arquivo python main.py
+5. Execute o arquivo python main.py
 
 Se já pussuir o arquivo .csv
-6- Execute o arquivo python ignis_desktop.py
+6. Execute o arquivo python ignis_desktop.py
 
 # Tecnologia utilizadas
 
@@ -43,3 +43,15 @@ Se já pussuir o arquivo .csv
 
 # Status do projeto
 
+Em desenvolvimento.
+
+## Próximos Ajustes
+
+* Refatorar código ignis_desktop e tentar modularizar
+* Analisar meios de deixar mais o processamento mais eficiente
+* Analisar modelor de interface mais amigáveis ao usuário
+
+## Próximas features
+
+* Botão para regular a velocidade do playback
+* Carregar mais de um ensaio para comparações entre propelentes
